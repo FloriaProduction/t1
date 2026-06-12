@@ -21,10 +21,9 @@ dependencies = []
 [tool.setuptools]
 packages = ["mylib"]
 package-dir = { "mylib" = "./mylib" }
-
-# Настройка Cython-расширений
-[tool.setuptools.ext-modules]
-"mylib.foo" = ["./src/mylib/foo.pyx"]
+ext-modules = [
+    {name="mylib.foo", sources=["./src/mylib/foo.pyx"]}
+]
 
 # Настройка динамической версии
 [tool.setuptools-scm]
