@@ -1,0 +1,14 @@
+/*
+/*/
+*/__pycache__
+*.pyd
+*.c
+
+!.github
+!mylib
+!src
+!tests
+
+!README.md
+!pyproject.toml
+!.gitignore
