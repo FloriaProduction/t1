@@ -1,0 +1,42 @@
+[build-system]
+requires = [
+    "setuptools>=80",
+    "setuptools-scm>=8",
+    "cython>=0.29.0"
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mylib"
+dynamic = ["version"]
+description = "Описание"
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+]
+requires-python = ">=3.12,<=3.14"
+dependencies = []
+
+[tool.setuptools]
+packages = ["mylib"]
+package-dir = { "mylib" = "./mylib" }
+
+# Настройка Cython-расширений
+[tool.setuptools.ext-modules]
+"mylib.foo" = ["./src/mylib/foo.pyx"]
+
+# Настройка динамической версии
+[tool.setuptools-scm]
+version_file = "./mylib/_version.py"
+
+# Настройки cibuildwheel для бинарной сборки под разные платформы
+[tool.cibuildwheel]
+# Собираем колеса для Python 3.8 - 3.12
+build = ["cp312-*", "cp313-*", "cp314-*"]
+# Пропускаем 32-битные сборки
+skip = ["*-win32", "*-manylinux_i686"]
+# Команда для тестирования собранного колеса
+test-command = "pytest {project}/tests"
+# Зависимости, необходимые для тестирования
+test-requires = ["pytest"]
