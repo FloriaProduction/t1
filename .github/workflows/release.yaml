@@ -7,6 +7,9 @@ on:
       - "v*"
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 jobs:
   build:
     name: Build wheels on ${{ matrix.os }}
@@ -83,9 +86,6 @@ jobs:
     name: Publish to TestPyPI
     needs: [test]
     runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
 
     steps:
       - name: Download all dist artifacts
