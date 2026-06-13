@@ -1,14 +1,13 @@
 [build-system]
 requires = [
     "setuptools>=80",
-    "setuptools-scm>=8",
     "cython>=0.29.0"
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "mylib-97cbaf8985bcc"
-dynamic = ["version"]
+version = "0.0.1"
 description = "Описание"
 readme = "README.md"
 classifiers = [
@@ -28,10 +27,6 @@ package-dir = { "mylib" = "./mylib" }
 ext-modules = [
     {name="mylib.foo", sources=["./src/mylib/foo.pyx"]}
 ]
-
-# Настройка динамической версии
-[tool.setuptools-scm]
-version_file = "./mylib/_version.py"
 
 # Настройки cibuildwheel для бинарной сборки под разные платформы
 [tool.cibuildwheel]
