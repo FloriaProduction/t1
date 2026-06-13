@@ -31,7 +31,7 @@ jobs:
         run: pip install build
 
       - name: Build sdist and wheel
-        run: python -m build
+        run: python -m build -w
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -69,7 +69,8 @@ jobs:
 
       - name: Install wheel into fresh environment
         run: |
-          pip install dist/*.whl, pytest
+          pip install dist/*.whl
+          pip install pytest
         shell: bash
 
       - name: Run tests from a safe directory
