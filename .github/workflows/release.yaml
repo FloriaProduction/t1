@@ -49,15 +49,34 @@ jobs:
           CIBW_BUILD: "cp312-* cp313-* cp314-*"
           # Пропускаем архитектуру i686, если не нужна
           CIBW_ARCHS: auto
-          # (Опционально) можно включить тесты внутри каждой сборки
-          CIBW_TEST_REQUIRES: pytest
-          CIBW_TEST_COMMAND: "TMPDIR=$(mktemp -d) && cp -r {project}/tests $TMPDIR/tests && cd $TMPDIR && pytest tests"
 
       - name: Upload wheels artifact
         uses: actions/upload-artifact@v4
         with:
           name: wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
+
+  test_wheels:
+    needs: build_wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.12", "3.13", "3.14"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: wheels-${{ matrix.os }}
+          path: dist
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }} # или перебрать версии матрицей
+      - name: Test wheel
+        run: |
+          pip install -e (ls dist/*.whl)[0][test]
+          pytest tests
 
   # 3. Публикация на TestPyPI после успешной сборки sdist и всех wheel
   publish:
