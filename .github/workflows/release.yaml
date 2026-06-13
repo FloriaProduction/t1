@@ -2,12 +2,10 @@ name: Build and Publish to TestPyPI
 
 on:
   push:
+    branches: [main]
     tags:
       - "v*"
-  workflow_dispatch: # Возможность запуска вручную
-
-permissions:
-  id-token: write # Необходимо для Trusted Publishing (OIDC)
+  workflow_dispatch:
 
 jobs:
   build:
@@ -21,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -81,6 +81,9 @@ jobs:
     name: Publish to TestPyPI
     needs: [test]
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
 
     steps:
       - name: Download all dist artifacts
