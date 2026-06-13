@@ -75,7 +75,7 @@ jobs:
 
       - name: Run tests
         run: |
-          ls -d .*/ */
+          ls -a tests/ 
           python -m pytest /tests
         shell: bash
 
