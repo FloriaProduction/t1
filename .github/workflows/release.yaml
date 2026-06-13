@@ -2,7 +2,6 @@ name: Build and Publish to TestPyPI
 
 on:
   push:
-    branches: [main]
     tags:
       - "v*"
   workflow_dispatch:
@@ -86,6 +85,8 @@ jobs:
     name: Publish to TestPyPI
     needs: [test]
     runs-on: ubuntu-latest
+
+    if: startsWith(github.ref, 'refs/tags/')
 
     steps:
       - name: Download all dist artifacts
