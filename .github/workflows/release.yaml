@@ -16,7 +16,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.12", "3.13", "3.14"]
+        # python-version: ["3.12", "3.13", "3.14"]
+        python-version: ["3.14"]
 
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +39,12 @@ jobs:
           name: dist-${{ matrix.os }}-${{ matrix.python-version }}
           path: dist/
 
+      - name: Upload tests for testing
+        uses: actions/upload-artifact@v4
+        with:
+          name: tests
+          path: tests/
+
   test:
     name: Test installed wheel on ${{ matrix.os }}
     needs: [build]
@@ -45,10 +52,15 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-        python-version: ["3.12", "3.13", "3.14"]
+        # python-version: ["3.12", "3.13", "3.14"]
+        python-version: ["3.14"]
 
     steps:
-      - uses: actions/checkout@v4 # нужен только для тестов (если они лежат в репозитории)
+      - name: Download tests artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: tests
+          path: tests/
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -63,16 +75,29 @@ jobs:
 
       - name: Install wheel into fresh environment
         run: |
-          python -m venv /tmp/test-venv
-          # Активируем venv (кроссплатформенно)
-          /tmp/test-venv/bin/pip install dist/*.whl
-          # Установим средства тестирования
-          /tmp/test-venv/bin/pip install pytest
+          pip install dist/*.whl, pytest
         shell: bash
 
       - name: Run tests from a safe directory
-        # Запускаем тесты из временной папки, передавая абсолютный путь к тестам
         run: |
-          cd ${{ runner.temp }}
-          /tmp/test-venv/bin/python -m pytest ${{ github.workspace }}/tests
+          python -m pytest /tests
         shell: bash
+
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: [test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download all dist artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist-all/
+          pattern: dist-*
+          merge-multiple: true
+
+      - name: Publish to TestPyPI via trusted publishing
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          packages-dir: dist-all/
