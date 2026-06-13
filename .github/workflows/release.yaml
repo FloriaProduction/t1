@@ -76,7 +76,7 @@ jobs:
       - name: Run tests
         run: |
           ls -a tests/ 
-          python -m pytest /tests
+          python -m pytest tests/
         shell: bash
 
   publish-testpypi:
