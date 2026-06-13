@@ -2,8 +2,8 @@ name: Publish to PyPI
 
 on:
   release:
-    types: [published] # Запускается при публикации релиза
-  workflow_dispatch: # Позволяет запустить вручную
+    types: [published]
+  workflow_dispatch:
 
 jobs:
   build_wheels:
@@ -18,20 +18,21 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Debug directory structure
-        run: |
-          find . -name "*.pyx" -o -name "*.py" -o -name "*.so" | head -20
-          cat mylib/__init__.py
-
       - name: Build wheels
+        uses: pypa/cibuildwheel@v2.21
         env:
           CIBW_BUILD_VERBOSITY: 3
-        uses: pypa/cibuildwheel@v2.16
+
+      - name: Prepare dist directory
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp wheelhouse/*.whl dist/
 
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}
-          path: ./wheelhouse/*.whl
+          path: dist/*.whl
 
   build_sdist:
     name: Build source distribution
@@ -53,9 +54,9 @@ jobs:
     name: Publish to PyPI
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    environment: release # Связываем с окружением GitHub для дополнительной защиты
+    environment: release
     permissions:
-      id-token: write # Обязательно для Trusted Publishing!
+      id-token: write
 
     steps:
       - uses: actions/download-artifact@v4
@@ -63,5 +64,8 @@ jobs:
           pattern: cibw-*
           path: dist
           merge-multiple: true
+
+      - name: List dist contents
+        run: ls -la dist/
 
       - uses: pypa/gh-action-pypi-publish@release/v1
