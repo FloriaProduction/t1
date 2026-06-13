@@ -18,15 +18,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Build wheels
-        env:
-          CIBW_BUILD_VERBOSITY: 3
-        uses: pypa/cibuildwheel@v2.16
-
       - name: Debug directory structure
         run: |
           find . -name "*.pyx" -o -name "*.py" -o -name "*.so" | head -20
           cat mylib/__init__.py
+
+      - name: Build wheels
+        env:
+          CIBW_BUILD_VERBOSITY: 3
+        uses: pypa/cibuildwheel@v2.16
 
       - uses: actions/upload-artifact@v4
         with:
