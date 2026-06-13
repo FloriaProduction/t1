@@ -13,16 +13,13 @@ jobs:
   build_sdist:
     name: Build sdist
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12", "3.13", "3.14"]
     steps:
       - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.13"
 
       - name: Build sdist
         run: |
@@ -54,7 +51,7 @@ jobs:
           CIBW_ARCHS: auto
           # (Опционально) можно включить тесты внутри каждой сборки
           CIBW_TEST_REQUIRES: pytest
-          CIBW_TEST_COMMAND: "pytest {package}/tests"
+          CIBW_TEST_COMMAND: "cd /tmp && pytest {project}/tests"
 
       - name: Upload wheels artifact
         uses: actions/upload-artifact@v4
