@@ -27,14 +27,3 @@ package-dir = { "mylib" = "./mylib" }
 ext-modules = [
     {name="mylib.foo", sources=["./src/mylib/foo.pyx"]}
 ]
-
-# Настройки cibuildwheel для бинарной сборки под разные платформы
-[tool.cibuildwheel]
-# Собираем колеса для Python 3.8 - 3.12
-build = ["cp312-*", "cp313-*", "cp314-*"]
-# Пропускаем 32-битные сборки
-skip = ["*-win32", "*-manylinux_i686"]
-# Команда для тестирования собранного колеса
-test-command = "pytest {project}/tests"
-# Зависимости, необходимые для тестирования
-test-requires = ["pytest"]
