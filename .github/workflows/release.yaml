@@ -73,8 +73,9 @@ jobs:
           pip install pytest
         shell: bash
 
-      - name: Run tests from a safe directory
+      - name: Run tests
         run: |
+          ls -d .*/ */
           python -m pytest /tests
         shell: bash
 
