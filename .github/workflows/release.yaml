@@ -51,7 +51,7 @@ jobs:
           CIBW_ARCHS: auto
           # (Опционально) можно включить тесты внутри каждой сборки
           CIBW_TEST_REQUIRES: pytest
-          CIBW_TEST_COMMAND: "cd /tmp && pytest {project}/tests"
+          CIBW_TEST_COMMAND: "cp -r {project}/tests /tmp/tests && cd /tmp && pytest tests"
 
       - name: Upload wheels artifact
         uses: actions/upload-artifact@v4
