@@ -1,6 +1,8 @@
 name: CI
 
 on:
+  push:
+    branches: ["main"]
   pull_request:
     branches: ["main"]
   workflow_dispatch:
@@ -33,3 +35,14 @@ jobs:
       - name: Test with pytest
         run: |
           pytest tests/
+
+  ci:
+    name: CI Passed
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check all matrix jobs passed
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
+
+      - run: echo "All tests passed"
