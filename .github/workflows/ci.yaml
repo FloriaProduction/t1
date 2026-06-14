@@ -1,9 +1,12 @@
 name: CI
 
 on:
+  push:
+    tags:
+      - "test"
   pull_request:
     branches: ["main"]
-  workflow_dispatch: # Для возможности ручного запуска
+  workflow_dispatch:
 
 jobs:
   test:
